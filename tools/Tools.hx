@@ -266,132 +266,6 @@ class Tools {
 	}
 	
 	
-	private static function generateSWFLiteClasses (project:HXProject, output:HXProject, swfLite:SWFLite, swfLiteAsset:Asset, prefix:String = ""):Void {
-		
-		var movieClipTemplate = File.getContent (PathHelper.getHaxelib (new Haxelib ("swf")) + "/templates/swf/lite/MovieClip.mtt");
-		var simpleButtonTemplate = File.getContent (PathHelper.getHaxelib (new Haxelib ("swf")) + "/templates/swf/lite/SimpleButton.mtt");
-		
-		for (symbolID in swfLite.symbols.keys ()) {
-			
-			var symbol = swfLite.symbols.get (symbolID);
-			var templateData = null;
-			
-			if (Std.is (symbol, SpriteSymbol)) {
-				
-				templateData = movieClipTemplate;
-				
-			} else if (Std.is (symbol, ButtonSymbol)) {
-				
-				templateData = simpleButtonTemplate;
-				
-			}
-			
-			if (templateData != null && symbol.className != null) {
-				
-				var lastIndexOfPeriod = symbol.className.lastIndexOf (".");
-				
-				var packageName = "";
-				var name = "";
-				
-				if (lastIndexOfPeriod == -1) {
-					
-					name = prefix + symbol.className;
-					
-				} else {
-					
-					packageName = symbol.className.substr (0, lastIndexOfPeriod);
-					name = prefix + symbol.className.substr (lastIndexOfPeriod + 1);
-					
-				}
-				
-				packageName = packageName.toLowerCase ();
-				name = name.substr (0, 1).toUpperCase () + name.substr (1);
-				
-				var classProperties = [];
-				
-				if (Std.is (symbol, SpriteSymbol)) {
-					
-					var spriteSymbol:SpriteSymbol = cast symbol;
-					
-					if (spriteSymbol.frames.length > 0) {
-						
-						for (object in spriteSymbol.frames[0].objects) {
-							
-							if (object.name != null) {
-								
-								if (swfLite.symbols.exists (object.symbol)) {
-									
-									var childSymbol = swfLite.symbols.get (object.symbol);
-									//var className = childSymbol.className;
-									var className = null;
-									
-									if (className == null) {
-										
-										if (Std.is (childSymbol, SpriteSymbol)) {
-											
-											className = "openfl.display.MovieClip";
-											
-										} else if (Std.is (childSymbol, ShapeSymbol)) {
-											
-											className = "openfl.display.Shape";
-											
-										} else if (Std.is (childSymbol, BitmapSymbol)) {
-											
-											className = "openfl.display.Bitmap";
-											
-										} else if (Std.is (childSymbol, DynamicTextSymbol) || Std.is (childSymbol, StaticTextSymbol)) {
-											
-											className = "openfl.text.TextField";
-											
-										} else if (Std.is (childSymbol, ButtonSymbol)) {
-											
-											className = "openfl.display.SimpleButton";
-											
-										}
-										
-									}
-									
-									if (className != null) {
-										
-										classProperties.push ( { name: object.name, type: className } );
-										
-									}
-									
-								}
-								
-							}
-							
-						}
-						
-					}
-					
-				}
-				
-				var context = { PACKAGE_NAME: packageName, CLASS_NAME: name, SWF_ID: swfLiteAsset.id, SYMBOL_ID: symbolID, CLASS_PROPERTIES: classProperties };
-				var template = new Template (templateData);
-				var targetPath;
-				
-				if (project.target == IOS) {
-					
-					targetPath = PathHelper.tryFullPath (targetDirectory) + "/" + project.app.file + "/" + "/haxe";
-					
-				} else {
-					
-					targetPath = PathHelper.tryFullPath (targetDirectory) + "/haxe";
-					
-				}
-				
-				var templateFile = new Asset ("", PathHelper.combine (targetPath, Path.directory (symbol.className.split (".").join ("/"))) + "/" + name + ".hx", AssetType.TEMPLATE);
-				templateFile.data = template.execute (context);
-				output.assets.push (templateFile);
-				
-			}
-			
-		}
-		
-	}
-	
-	
 	public static function main () {
 		
 		var arguments = Sys.args ();
@@ -751,7 +625,21 @@ class Tools {
 					
 					if (library.generate) {
 						
-						generateSWFLiteClasses (project, output, swfLite, swfLiteAsset, library.prefix);
+						var targetPath;
+
+						if (project.target == IOS) {
+
+							targetPath = PathHelper.tryFullPath (targetDirectory) + "/" + project.app.file + "/" + "/haxe";
+
+						} else {
+
+							targetPath = PathHelper.tryFullPath (targetDirectory) + "/haxe";
+
+						}
+
+						var generator = new SWFLiteGenerator(targetPath, output, swfLite, swfLiteAsset);
+						generator.prefix = library.prefix;
+						generator.generateClasses();
 						
 					}
 					
