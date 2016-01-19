@@ -105,6 +105,7 @@ class SWFLiteGenerator {
         name = name.substr (0, 1).toUpperCase () + name.substr (1);
 
         var classProperties = [];
+        var childClasses = [];
 
         if (Std.is (symbol, SpriteSymbol)) {
 
@@ -122,6 +123,7 @@ class SWFLiteGenerator {
                         if (generatedClasses.exists(childSymbol.id)) {
 
                             childClassName = generatedClasses.get(childSymbol.id);
+                            childClasses.push( { name: object.name, type: childClassName } );
 
                         }
                         else if (Std.is (childSymbol, SpriteSymbol)) {
@@ -135,6 +137,7 @@ class SWFLiteGenerator {
                                     if (childObject.name != null && swfLite.symbols.exists (childObject.symbol)) {
 
                                         childClassName = generateClass(childSymbol, movieClipTemplate);
+                                        childClasses.push( { name: object.name, type: childClassName } );
                                         break;
 
                                     }
@@ -181,7 +184,7 @@ class SWFLiteGenerator {
 
         }
 
-        var context = { PACKAGE_NAME: packageName, CLASS_NAME: name, SWF_ID: swfLiteAsset.id, SYMBOL_ID: symbol.id, CLASS_PROPERTIES: classProperties };
+        var context = { PACKAGE_NAME: packageName, CLASS_NAME: name, SWF_ID: swfLiteAsset.id, SYMBOL_ID: symbol.id, CLASS_PROPERTIES: classProperties, CHILD_CLASSES: childClasses };
         var template = new Template (templateData);
 
         var templateFile = new Asset ("", PathHelper.combine (targetPath, Path.directory (className.split (".").join ("/"))) + "/" + name + ".hx", AssetType.TEMPLATE);

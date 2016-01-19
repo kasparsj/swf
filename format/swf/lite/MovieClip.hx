@@ -53,6 +53,8 @@ class MovieClip extends flash.display.MovieClip {
 	@:noCompletion private var __previousTime:Int;
 	@:noCompletion private var __totalFrames:Int;
 	#end
+
+	private var __childClasses:Map<String, Class<Dynamic>>;
 	
 	
 	public function new (swf:SWFLite, symbol:SpriteSymbol) {
@@ -238,9 +240,14 @@ class MovieClip extends flash.display.MovieClip {
 		if (__swf.symbols.exists (object.symbol)) {
 			
 			var symbol = __swf.symbols.get (object.symbol);
-			
-			if (Std.is (symbol, SpriteSymbol)) {
-				
+
+			if (object.name != null && __childClasses != null && __childClasses.exists(object.name)) {
+
+				displayObject = Type.createInstance(__childClasses.get(object.name), []);
+
+			}
+			else if (Std.is (symbol, SpriteSymbol)) {
+
 				displayObject = new MovieClip (__swf, cast symbol);
 				
 			} else if (Std.is (symbol, ShapeSymbol)) {

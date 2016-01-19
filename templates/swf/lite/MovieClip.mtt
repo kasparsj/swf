@@ -23,6 +23,11 @@ class ::CLASS_NAME:: extends MovieClip {
 		
 		var swfLite = SWFLite.instances.get ("::SWF_ID::");
 		var symbol = swfLite.symbols.get (::SYMBOL_ID::);
+
+		::if (CHILD_CLASSES.length > 0)::__childClasses = new Map<String, Class<Dynamic>>();
+		::end::
+		::foreach CHILD_CLASSES::__childClasses.set("::name::", ::type::);
+		::end::
 		
 		super (swfLite, cast symbol);
 		
