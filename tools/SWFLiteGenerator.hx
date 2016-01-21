@@ -130,7 +130,13 @@ class SWFLiteGenerator {
 
                             var childSpriteSymbol:SpriteSymbol = cast childSymbol;
 
-                            if (spriteSymbol.frames.length > 0) {
+                            if (childSpriteSymbol.className != null) {
+
+                                childClassName = generateClass(childSymbol, movieClipTemplate);
+                                childClasses.push( { name: object.name, type: childClassName } );
+
+                            }
+                            else if (childSpriteSymbol.frames.length > 0) {
 
                                 for (childObject in childSpriteSymbol.frames[0].objects) {
 
