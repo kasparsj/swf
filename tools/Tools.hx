@@ -602,7 +602,7 @@ class Tools {
 					//}
 					
 					var swfLiteAsset = new Asset ("", "lib/" + library.name + "/" + library.name + ".dat", AssetType.TEXT);
-					var swfLiteAssetData = swfLite.serialize ();
+					var swfLiteAssetData = swfLite.serialize (project.target != Platform.FLASH);
 					
 					if (cacheDirectory != null) {
 						

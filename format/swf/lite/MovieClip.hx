@@ -52,6 +52,7 @@ class MovieClip extends flash.display.MovieClip {
 	@:noCompletion private var __currentFrame:Int;
 	@:noCompletion private var __previousTime:Int;
 	@:noCompletion private var __totalFrames:Int;
+	@:noCompletion private var __currentLabels:Array<FrameLabel>;
 	#end
 
 	private var __childClasses:Map<String, Class<Dynamic>>;
@@ -71,7 +72,6 @@ class MovieClip extends flash.display.MovieClip {
 		__currentFrame = 1;
 		__totalFrames = __symbol.frames.length;
 		
-		#if !flash
 		__currentLabels = [];
 		
 		for (i in 0...__symbol.frames.length) {
@@ -83,8 +83,7 @@ class MovieClip extends flash.display.MovieClip {
 			}
 			
 		}
-		#end
-		
+
 		__updateFrame ();
 		
 		if (__totalFrames > 1) {
@@ -216,7 +215,17 @@ class MovieClip extends flash.display.MovieClip {
 		}
 		
 	}
-	
+
+
+	#if flash
+	@:getter(currentLabels)
+	private function get_currentLabels():Array<FrameLabel> {
+
+		return __currentLabels;
+
+	}
+	#end
+
 	
 	public function unflatten ():Void {
 		
