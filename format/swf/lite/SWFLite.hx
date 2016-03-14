@@ -169,6 +169,7 @@ import openfl.Assets;
 		
 		var serializer = new Serializer ();
 		serializer.useCache = true;
+		serializer.useEnumIndex = true;
 		serializer.serialize (this);
 		return serializer.toString ();
 		
