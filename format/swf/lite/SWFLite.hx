@@ -165,11 +165,11 @@ import openfl.Assets;
 	}
 	
 	
-	public function serialize ():String {
+	public function serialize (useEnumIndex:Bool):String {
 		
 		var serializer = new Serializer ();
 		serializer.useCache = true;
-		serializer.useEnumIndex = true;
+		serializer.useEnumIndex = useEnumIndex;
 		serializer.serialize (this);
 		return serializer.toString ();
 		
