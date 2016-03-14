@@ -313,6 +313,9 @@ class MovieClip extends flash.display.MovieClip {
 					#if (cpp || neko)
 					shape.cacheAsBitmap = true;
 					#end
+					#if (openfl && flash)
+					fillType = (Std.parseInt(fillType) == 0 ? openfl.display.GradientType.LINEAR : openfl.display.GradientType.RADIAL);
+					#end
 					graphics.beginGradientFill (fillType, colors, alphas, ratios, matrix, spreadMethod, interpolationMethod, focalPointRatio);
 				
 				case CurveTo (controlX, controlY, anchorX, anchorY):
