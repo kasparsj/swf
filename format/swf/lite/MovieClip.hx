@@ -36,7 +36,7 @@ import lime.Assets in LimeAssets;
 #end
 
 
-class MovieClip extends flash.display.MovieClip {
+class MovieClip extends flash.display.MovieClip implements Dynamic {
 	
 	
 	@:noCompletion private var __frameTime:Int;
